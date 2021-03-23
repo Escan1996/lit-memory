@@ -1,56 +1,39 @@
-import { css, html, LitElement } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import {
+  css,
+  html,
+  LitElement
+} from 'lit-element';
+import {
+  classMap
+} from 'lit-html/directives/class-map';
 
 export class Card extends LitElement {
   static get styles() {
-    return css`
+    return css `
       :host {
-        background: gray;
-        z-index: 1;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, .8);
-        border-radius: 1rem;
-        text-align: center;
+        width: 80px;
+        height: 70px;
         padding: 2em;
-        width: 50px;
-        height: 50px;
         margin: 50px;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        border-radius: 2rem;
       }
-      :host([winner=true]){
-        box-shadow: inset 0 0 10px whitesmoke,
-        inset 20px 0 80px #f0f,
-          inset -20px 0 80px #0ff,
-        inset 20px 0 300px #f0f,
-          inset -20px 0 300px #0ff,
-        0 0 50px #fff,
-        -10px 0 80px #f0f,
-        10px 0 80px #0ff;
-        border-radius: 30px;
-        cursor: pointer;
-      }
-      :host(:hover)[winner=false] {
-        z-index: 2;
-        box-shadow: inset 0 0 10px whitesmoke,
-        inset 20px 0 80px #f0f,
-          inset -20px 0 80px #0ff,
-        inset 20px 0 20x #f0f,
-          inset -20px 0 20px #0ff,
-        0 0 50px #fff,
-        -10px 0 80px #f0f,
-        10px 0 80px #0ff;
-        border-radius: 30px;
-        cursor: pointer;
-      }
-      #unknown-value, #value {
-        font-size: 2em;
-      }
+
       #value {
+        font-size: 2em;
         cursor: not-allowed;
-      }
-      #options {
-        display: none;
+        background: gray;
       }
       .hide {
         display: none;
+      }
+      .unplayed {
+        background-color: gray;
+        border-color: transparent;
+        font-size: 2em;
       }
     `;
   }
@@ -58,7 +41,7 @@ export class Card extends LitElement {
   static get properties() {
     return {
       isPlayed: {
-        type: Boolean
+        type: Boolean,
       },
       choice: {
         type: String
@@ -70,51 +53,64 @@ export class Card extends LitElement {
         type: String,
         reflect: true
       },
-      disableNumberEmit: {
-        type: Number,
-      },
-      disableNumberGotten: {
-        type: Number,
-      },
       available: {
         type: Number,
       },
       fruit: {
         type: String
+      },
+      showClass: {
+        type: Boolean
       }
     }
   }
 
   __onClick() {
     this.isPlayed = true;
-    this.valueClass = { hide: !this.isPlayed };
-    this.choiceClass = { hide: this.isPlayed };
+    this.valueClass = {
+      hide: !this.isPlayed
+    };
   }
 
   constructor() {
     super();
     this.isPlayed = false;
-    this.valueClass = { hide: !this.isPlayed };
-    this.choiceClass = { hide: this.isPlayed };
+    this.valueClass = {
+      hide: !this.isPlayed
+    };
+    this.showClass = true;
   }
 
   connectedCallback() {
     super.connectedCallback();
   }
 
+  updated(changedProperties) {
+    if (changedProperties.has('isPlayed')) {
+      console.log('Entre al updated', this.isPlayed);
+      this.valueClass = {
+        hide: this.isPlayed
+      }
+    }  
+  }
 
 
   render() {
-    return html`
-      <button @click="${this.__onClick}">
+    if (this.showClass) {
+      return html `
+      <div>
+      <button class="unplayed" @click="${this.__onClick}">
         ❔
       </button>
       <div id="value" class='${classMap(this.valueClass)}'>
         ${this.fruit}
       </div>
-      <slot>
-        Player
-      </slot>
+      </div>
     `;
+    } else {
+      return html `
+      <div>Pair found</div>
+      `
+    }
   }
 }

@@ -1,9 +1,12 @@
-import { css, html, LitElement } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
+import {
+  css,
+  html,
+  LitElement
+} from 'lit-element';
 
 export class ScoreBoard extends LitElement {
   static get styles() {
-    return css`
+    return css `
       :host {
       }
       
@@ -24,34 +27,35 @@ export class ScoreBoard extends LitElement {
 
   static get properties() {
     return {
-      isPlayed: {
-        type: Boolean
-      },
-      options: {
-        type: Array
-      },
-      winner: {
-        type: String,
-        reflect: true
-      },
-      Score: {
+      score: {
         type: Number,
+      },
+      isWinner: {
+        type: Boolean
       }
     }
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addScore();
+  }
+
+  addScore() {
+    if(this.isWinner) {
+      this.score++;
+    }
+  }
   constructor() {
     super();
-    this.isPlayed = false;
-    this.valueClass = { hide: !this.isPlayed };
-    this.choiceClass = { hide: this.isPlayed };
-    this.options = ['🍕', '🍍', '🍉', '🥕','🍤'];
+    this.score = 0;
+    this.isWinner = false;
   }
 
   render() {
-    return html`
+    return html `
       <div class="score">
-        <span> Oscar 0</span>
+        <span>${this.score}</span>
   </div>
     `;
   }

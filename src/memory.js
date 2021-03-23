@@ -24,6 +24,7 @@ export class Memory extends LitElement {
         padding: 40px;
         width: 100%;
         display: flex;
+        height: 500px;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-evenly;
@@ -80,48 +81,72 @@ export class Memory extends LitElement {
         type: Array,
       },
       saveFruit: {
-        type: String
+        type: Object
       },
+      turnCounter: {
+        type: Number
+      },
+      playerTurn: {
+        type: Boolean
+      },
+      addScore: {
+        type: Number
+      }
     };
   }
 
   constructor() {
     super();
     this.message = 'Let\'s play memory!';
-    this.namePlayer = '';
-    this.playerChoice = '';
-    this.npcChoice = '';
+    this.saveFruit = {
+      value: '',
+      id: ''
+    };
+    this.playerTurn = true;
     this.winner = '';
+    this.addScore = 1;
+    this.hideCard = true;
+    this.turnCounter = 0;
     this.cardArray = [{
       value: '🍕',
-      show: false
+      show: true, 
+      isPlayed: false
     }, {
       value: '🍍',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍉',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🥕',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍤',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍕',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍍',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍉',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🥕',
-      show: false
+      show: true,
+      isPlayed: false
     }, {
       value: '🍤',
-      show: false
+      show: true,
+      isPlayed: false
     }];
   }
 
@@ -139,59 +164,49 @@ export class Memory extends LitElement {
     this.playerChoice = e.detail.choice;
   }
 
-  __npcSelect(e) {
-    this.npcChoice = e.detail.choice;
-  }
-
-  __whoWon() {
-    if (this.npcChoice === this.playerChoice) {
-      this.message = 'TIE!';
-    } else if (
-      (this.npcChoice === '✊' && this.playerChoice === '✌️') ||
-      (this.npcChoice === '🖐' && this.playerChoice === '✊') ||
-      (this.npcChoice === '✌️' && this.playerChoice === '🖐')
-    ) {
-      this.winner = 'npc';
-      this.message = 'Winner NPC';
-    } else {
-      this.winner = 'player';
-      this.message = `Winner ${this.namePlayer}`;
-    }
-  }
-
   changeTotalNumber() {
 
   }
 
-  updated(_changedProperties) {
-    super.updated(_changedProperties);
-    if (
-      _changedProperties.has('npcChoice') && _changedProperties.has('playerChoice') &&
-      this.npcChoice !== ''
-    ) {
-      this.__whoWon();
-    }
-  }
-
   __fruitSelected(card, i) {
-    console.log(this.saveFruit);
-    if (this.saveFruit) {
+    this.cardArray[i].isPlayed = true;
+    this.playerManage();
+    if (this.saveFruit.value) {
       this.compareFruits(card, i);
     } else {
-      this.saveFruit = card;
+      this.saveFruit = {
+        value: card,
+        id: i
+      };
+    }
+    this.requestUpdate();
+  }
+
+  playerManage() {
+    this.turnCounter++;
+    if (this.turnCounter === 2) {
+      this.playerTurn = !this.playerTurn;
+      this.turnCounter = 0;
     }
   }
 
   compareFruits(card, i) {
-    if (this.saveFruit === card) {
-      for (let i = 0; i < 10; i++) {
-        this.cardArray[i].show = true;
-        console.log(this.cardArray[i].show);
-      }
-    }
+    if (this.saveFruit.value === card) {
+      this.cardArray[i].show = false;
+      this.cardArray[this.saveFruit.id].show = false;
+    } else {
+      this.cardArray[i].isPlayed = false;
+      this.cardArray[this.saveFruit.id].isPlayed = false;
+    }  
+    this.saveFruit = {
+      value: '',
+      id: ''
+    };
+    this.requestUpdate();
   }
 
   render() {
+    console.table(this.cardArray);
     return html `
       <div id='welcome-message'>
         <h2>${this.message}</h2>
@@ -201,8 +216,8 @@ export class Memory extends LitElement {
         <score-board class="player2"></score-board>
       </div>
       <div id='board'> 
-        ${this.cardArray.map(card, i => html`
-        <card-memory @click="${e => this.__fruitSelected(card.value, i)}" .fruit="${card.value}">
+        ${this.cardArray.map((card, i) => html`
+        <card-memory @click="${e => this.__fruitSelected(card.value, i)}" .fruit="${card.value}" .showClass="${card.show}" .isPlayed="${card.isPlayed}">
         </card-memory>
         `)}
        

@@ -69,11 +69,23 @@ export class Card extends LitElement {
       winner: {
         type: String,
         reflect: true
+      },
+      disableNumberEmit: {
+        type: Number,
+      },
+      disableNumberGotten: {
+        type: Number,
+      },
+      available: {
+        type: Number,
+      },
+      fruit: {
+        type: String
       }
     }
   }
 
-  __onClick(hyujjjjjjjjjjjjjjuhhh) {
+  __onClick() {
     this.isPlayed = true;
     this.valueClass = { hide: !this.isPlayed };
     this.choiceClass = { hide: this.isPlayed };
@@ -84,27 +96,10 @@ export class Card extends LitElement {
     this.isPlayed = false;
     this.valueClass = { hide: !this.isPlayed };
     this.choiceClass = { hide: this.isPlayed };
-    this.options = ['🍕', '🍍', '🍉', '🥕','🍤'];
-    this.choice = this.assignValue();
   }
 
-  assignValue() {
-  let value;
-  let number = Math.floor((Math.random() * 5) + 1);
-  value = this.options[number-1];
-  return value;
-  }
-
-  updated(_changedProperties) {
-    super.updated(_changedProperties);
-    if (_changedProperties.has('isPlayed') && this.isPlayed) {
-      const playEvent = new CustomEvent('choice-selected', {
-        detail: {
-          choice: this.choice
-        }
-      });
-      this.dispatchEvent(playEvent);
-    }
+  connectedCallback() {
+    super.connectedCallback();
   }
 
 
@@ -113,9 +108,9 @@ export class Card extends LitElement {
     return html`
       <button @click="${this.__onClick}">
         ❔
-  </button>
+      </button>
       <div id="value" class='${classMap(this.valueClass)}'>
-        ${this.choice}
+        ${this.fruit}
       </div>
       <slot>
         Player

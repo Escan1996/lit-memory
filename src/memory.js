@@ -4,6 +4,7 @@ import {
   LitElement
 } from 'lit-element';
 import './Card.js'
+import './score-board.js';
 
 export class Memory extends LitElement {
 
@@ -16,7 +17,7 @@ export class Memory extends LitElement {
         font-family: sans-serif;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-available: center;
         border-radius: 30px;
       }
       #board {
@@ -26,6 +27,23 @@ export class Memory extends LitElement {
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-evenly;
+      }
+
+      .score-board {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .player1 {
+        margin-right: 100px;
+      }
+      
+      .player2 {
+        margin-left: 100px;
+      }
+
+      #welcome-message {
+        text-align: center;
       }
     `;
   }
@@ -54,7 +72,16 @@ export class Memory extends LitElement {
       },
       message: {
         type: String
-      }
+      },
+      totalNumber: {
+        type: Number,
+      },
+      cardArray: {
+        type: Array,
+      },
+      saveFruit: {
+        type: String
+      },
     };
   }
 
@@ -65,6 +92,45 @@ export class Memory extends LitElement {
     this.playerChoice = '';
     this.npcChoice = '';
     this.winner = '';
+    this.cardArray = [{
+      value: '🍕',
+      show: false
+    }, {
+      value: '🍍',
+      show: false
+    }, {
+      value: '🍉',
+      show: false
+    }, {
+      value: '🥕',
+      show: false
+    }, {
+      value: '🍤',
+      show: false
+    }, {
+      value: '🍕',
+      show: false
+    }, {
+      value: '🍍',
+      show: false
+    }, {
+      value: '🍉',
+      show: false
+    }, {
+      value: '🥕',
+      show: false
+    }, {
+      value: '🍤',
+      show: false
+    }];
+  }
+
+  assignValue() {
+    let value;
+    let number = Math.floor((Math.random() * 5) + 1);
+    value = this.options[number - 1];
+    this.disableNumberEmit = number - 1;
+    return value;
   }
 
   __playerSelect(e) {
@@ -93,6 +159,10 @@ export class Memory extends LitElement {
     }
   }
 
+  changeTotalNumber() {
+
+  }
+
   updated(_changedProperties) {
     super.updated(_changedProperties);
     if (
@@ -103,44 +173,39 @@ export class Memory extends LitElement {
     }
   }
 
+  __fruitSelected(card, i) {
+    console.log(this.saveFruit);
+    if (this.saveFruit) {
+      this.compareFruits(card, i);
+    } else {
+      this.saveFruit = card;
+    }
+  }
+
+  compareFruits(card, i) {
+    if (this.saveFruit === card) {
+      for (let i = 0; i < 10; i++) {
+        this.cardArray[i].show = true;
+        console.log(this.cardArray[i].show);
+      }
+    }
+  }
+
   render() {
     return html `
       <div id='welcome-message'>
         <h2>${this.message}</h2>
       </div>
-      <div id='board'>
-        <card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
+      <div class="score-board">
+        <score-board class="player1"></score-board>
+        <score-board class="player2"></score-board>
+      </div>
+      <div id='board'> 
+        ${this.cardArray.map(card, i => html`
+        <card-memory @click="${e => this.__fruitSelected(card.value, i)}" .fruit="${card.value}">
         </card-memory>
-        <card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory><card-memory @choice-selected='${this.__playerSelect}'
-                                  .winner="${this.winner !== '' && this.winner === 'player'}">
-          ${this.namePlayer}
-        </card-memory>
+        `)}
+       
       </div>
     `;
   }

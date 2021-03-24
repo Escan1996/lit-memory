@@ -11,7 +11,7 @@ export class Memory extends LitElement {
   static get styles() {
     return css `
       :host {
-        background-color: orange;
+        background-image: url('https://i.pinimg.com/originals/79/52/6c/79526c076a08e525becfd4215e1c6c16.jpg');
         display: flex;
         color: white;
         font-family: sans-serif;
@@ -19,6 +19,8 @@ export class Memory extends LitElement {
         justify-content: center;
         align-available: center;
         border-radius: 30px;
+        width: 100%;
+        height: auto;
       }
       #board {
         padding: 40px;
@@ -28,11 +30,12 @@ export class Memory extends LitElement {
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-evenly;
+        poisition: relative;
       }
 
       .score-board {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-evenly;
       }
 
       .player1 {
@@ -46,7 +49,21 @@ export class Memory extends LitElement {
       }
 
       #welcome-message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-height: 60px;
+        padding: 10px;
+        border-radius: 1rem;
         text-align: center;
+        z-index: 1;
+        background-image: url('https://image.winudf.com/v2/image/Y29tLmJsYWNrYmFja2dyb3VuZHdhbGxwYXBlcnNpbWFnZXNfc2NyZWVuXzJfMTUwOTI1MjEyOV8wOTU/screen-2.jpg?h=355&fakeurl=1&type=.jpg');
+      }
+      
+      .play-image {
+        border-radius: 2rem;
+        max-width: 200px;
+        max-height: 80px;
       }
     `;
   }
@@ -63,21 +80,6 @@ export class Memory extends LitElement {
           name = name.substr(0, 6);
           return name;
         }
-      },
-      playerChoice: {
-        type: String
-      },
-      npcChoice: {
-        type: String
-      },
-      winner: {
-        type: String
-      },
-      message: {
-        type: String
-      },
-      totalNumber: {
-        type: Number,
       },
       cardArray: {
         type: Array,
@@ -102,19 +104,21 @@ export class Memory extends LitElement {
       },
       player2Turn: {
         type: Boolean
+      },
+      isWinner: {
+        type: Boolean
       }
     };
   }
 
   constructor() {
     super();
-    this.message = 'Let\'s play memory!';
     this.saveFruit = {
       value: '',
       id: ''
     };
     this.playerTurn = true;
-    this.winner = '';
+    this.isWinner = false;
     this.addScore1 = 0;
     this.addScore2 = 0;
     this.player1Turn = true;
@@ -164,9 +168,23 @@ export class Memory extends LitElement {
     }];
   }
 
+  sortCards() {
+    var currentIndex = this.cardArray.length,
+      temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = this.cardArray[currentIndex];
+      this.cardArray[currentIndex] = this.cardArray[randomIndex];
+      this.cardArray[randomIndex] = temporaryValue;
+    }
+    return this.cardArray;
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.playerManage();
+    this.sortCards();
   }
 
   assignValue() {
@@ -179,6 +197,8 @@ export class Memory extends LitElement {
 
   __fruitSelected(card, i) {
     this.playerManage();
+    this.turnCounter++;
+    this.changeTurn();
     this.cardArray[i].isPlayed = true;
     if (this.saveFruit.value) {
       this.compareFruits(card, i);
@@ -199,26 +219,36 @@ export class Memory extends LitElement {
       this.player1Turn = false;
       this.player2Turn = true;
     }
-    this.turnCounter++;
+  }
+
+  changeTurn() {
     if (this.turnCounter === 2) {
-      this.playerTurn = !this.playerTurn;
+      setTimeout(() => {
+        if (!this.isWinner) {
+          this.playerTurn = !this.playerTurn;
+          this.player1Turn = !this.player1Turn;
+          this.player2Turn = !this.player2Turn;
+        }
+      }, 2000);
       this.turnCounter = 0;
     }
   }
 
   add() {
     if (this.playerTurn) {
-      this.addScore2++;
-    } else {
       this.addScore1++;
+    } else {
+      this.addScore2++;
     }
   }
 
   compareFruits(card, i) {
     if (this.saveFruit.value === card) {
+      this.turnCounter = 0;
       setTimeout(() => {
         this.cardArray[i].show = false;
         this.cardArray[this.saveFruit.id].show = false;
+        this.isWinner = true;
         this.add();
         this.saveFruit = {
           value: '',
@@ -228,8 +258,8 @@ export class Memory extends LitElement {
     } else {
       setTimeout(() => {
         this.cardArray[this.saveFruit.id].isPlayed = false;
-        this.cardArray[i].isPlayed = false; //No borra su value
-        console.log(this.cardArray[i]);
+        this.cardArray[i].isPlayed = false;
+        this.isWinner = false;
         this.saveFruit = {
           value: '',
           id: ''
@@ -242,11 +272,11 @@ export class Memory extends LitElement {
 
   render() {
     return html `
-      <div id='welcome-message'>
-        <h2>${this.message}</h2>
-      </div>
       <div class="score-board">
         <score-board .score="${this.addScore1}" .isTurn="${this.player1Turn}" .player="${'Oscar'}" class="player1"></score-board>
+        <div id='welcome-message'>
+        Let's play Memory
+      </div>
         <score-board .score="${this.addScore2}" .isTurn="${this.player2Turn}" .player="${'Rival'}" class="player2"></score-board>
       </div>
       <div id='board'> 

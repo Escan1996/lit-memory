@@ -15,7 +15,7 @@ export class Card extends LitElement {
         height: 70px;
         padding: 2em;
         margin: 50px;
-        background: gray;
+        background-image: url('https://image.freepik.com/free-vector/beautiful-background-with-pink-clouds-sky_1278-71.jpg');
         display: flex;
         justify-content: center;
         align-items: flex-start;
@@ -23,17 +23,17 @@ export class Card extends LitElement {
       }
 
       #value {
-        font-size: 2em;
+        font-size: 3em;
         cursor: not-allowed;
-        background: gray;
       }
       .hide {
         display: none;
       }
       .unplayed {
-        background-color: gray;
         border-color: transparent;
         font-size: 2em;
+        position: absolute;
+        transform: translate(-15px, -20px);
       }
     `;
   }
@@ -80,11 +80,11 @@ export class Card extends LitElement {
 
 
   updated(changedProperties) {
-      if (changedProperties.has('isPlayed')) {
-        this.valueClass = {
-          hide: this.isPlayed
-        };
-      }
+    if (changedProperties.has('isPlayed')) {
+      this.valueClass = {
+        hide: this.isPlayed
+      };
+    }
   }
 
 
@@ -92,8 +92,8 @@ export class Card extends LitElement {
     if (this.showClass) {
       return html `
       <div>
-      <div class="unplayed">
-        ❔
+      <div class="unplayed"> 
+      ${this.isPlayed ? html`` : html`<p>❔</p>`}
     </div>
       <div id="value" class='${classMap(this.valueClass)}'>
         ${this.fruit}

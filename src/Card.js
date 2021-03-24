@@ -65,13 +65,6 @@ export class Card extends LitElement {
     }
   }
 
-  __onClick() {
-    this.isPlayed = true;
-    this.valueClass = {
-      hide: !this.isPlayed
-    };
-  }
-
   constructor() {
     super();
     this.isPlayed = false;
@@ -85,13 +78,13 @@ export class Card extends LitElement {
     super.connectedCallback();
   }
 
+
   updated(changedProperties) {
-    if (changedProperties.has('isPlayed')) {
-      console.log('Entre al updated', this.isPlayed);
-      this.valueClass = {
-        hide: this.isPlayed
+      if (changedProperties.has('isPlayed')) {
+        this.valueClass = {
+          hide: this.isPlayed
+        };
       }
-    }  
   }
 
 
@@ -99,9 +92,9 @@ export class Card extends LitElement {
     if (this.showClass) {
       return html `
       <div>
-      <button class="unplayed" @click="${this.__onClick}">
+      <div class="unplayed">
         ❔
-      </button>
+    </div>
       <div id="value" class='${classMap(this.valueClass)}'>
         ${this.fruit}
       </div>

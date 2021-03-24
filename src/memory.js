@@ -70,17 +70,6 @@ export class Memory extends LitElement {
 
   static get properties() {
     return {
-      namePlayer: {
-        type: String,
-        reflect: true,
-        attribute: 'name-player',
-        converter: (value) => {
-          let name = value;
-          name = name.toUpperCase();
-          name = name.substr(0, 6);
-          return name;
-        }
-      },
       cardArray: {
         type: Array,
       },
@@ -107,6 +96,9 @@ export class Memory extends LitElement {
       },
       isWinner: {
         type: Boolean
+      },
+      gameFinish: {
+        type: Number
       }
     };
   }
@@ -123,7 +115,7 @@ export class Memory extends LitElement {
     this.addScore2 = 0;
     this.player1Turn = true;
     this.player2Turn = false;
-    this.hideCard = true;
+    this.gameFinish = 0;
     this.turnCounter = 0;
     this.cardArray = [{
       value: '🍕',
@@ -168,7 +160,7 @@ export class Memory extends LitElement {
     }];
   }
 
-  sortCards() {
+  __sortCards() {
     var currentIndex = this.cardArray.length,
       temporaryValue, randomIndex;
     while (0 !== currentIndex) {
@@ -183,25 +175,17 @@ export class Memory extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.playerManage();
-    this.sortCards();
-  }
-
-  assignValue() {
-    let value;
-    let number = Math.floor((Math.random() * 5) + 1);
-    value = this.options[number - 1];
-    this.disableNumberEmit = number - 1;
-    return value;
+    this.__playerManage();
+    this.__sortCards();
   }
 
   __fruitSelected(card, i) {
-    this.playerManage();
+    this.__playerManage();
     this.turnCounter++;
-    this.changeTurn();
+    this.__changeTurn();
     this.cardArray[i].isPlayed = true;
     if (this.saveFruit.value) {
-      this.compareFruits(card, i);
+      this.__compareFruits(card, i);
     } else {
       this.saveFruit = {
         value: card,
@@ -209,9 +193,18 @@ export class Memory extends LitElement {
       };
     }
     this.requestUpdate();
+    if (this.gameFinish === 5) {
+      setTimeout(() => {
+        if (this.addScore1 > this.addScore2) {
+          alert('!Oscar WINS!');
+        } else {
+          alert('Rival WINS')
+        }
+      }, 2000);
+    }
   }
 
-  playerManage() {
+  __playerManage() {
     if (this.playerTurn) {
       this.player1Turn = true;
       this.player2Turn = false;
@@ -221,7 +214,7 @@ export class Memory extends LitElement {
     }
   }
 
-  changeTurn() {
+  __changeTurn() {
     if (this.turnCounter === 2) {
       setTimeout(() => {
         if (!this.isWinner) {
@@ -234,7 +227,7 @@ export class Memory extends LitElement {
     }
   }
 
-  add() {
+  __addToBoard() {
     if (this.playerTurn) {
       this.addScore1++;
     } else {
@@ -242,14 +235,15 @@ export class Memory extends LitElement {
     }
   }
 
-  compareFruits(card, i) {
+  __compareFruits(card, i) {
     if (this.saveFruit.value === card) {
       this.turnCounter = 0;
+      this.gameFinish++;
       setTimeout(() => {
         this.cardArray[i].show = false;
         this.cardArray[this.saveFruit.id].show = false;
         this.isWinner = true;
-        this.add();
+        this.__addToBoard();
         this.saveFruit = {
           value: '',
           id: ''
@@ -284,7 +278,6 @@ export class Memory extends LitElement {
         <card-memory @click="${e => this.__fruitSelected(card.value, i)}" .fruit="${card.value}" .showClass="${card.show}" .isPlayed="${card.isPlayed}">
         </card-memory>
         `)}
-       
       </div>
     `;
   }

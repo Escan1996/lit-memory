@@ -57,7 +57,7 @@ export class ScoreBoard extends LitElement {
     super();
     this.score = 0;
     this.isTurn = false;
-  } 
+  }
 
   render() {
     return html `

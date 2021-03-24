@@ -35,6 +35,11 @@ export class Card extends LitElement {
         position: absolute;
         transform: translate(-15px, -20px);
       }
+      .card-found {
+        text-align: center;
+        font-weight: 800;
+        font-size: 25px;
+      }
     `;
   }
 
@@ -43,18 +48,9 @@ export class Card extends LitElement {
       isPlayed: {
         type: Boolean,
       },
-      choice: {
-        type: String
-      },
-      options: {
-        type: Array
-      },
       winner: {
         type: String,
         reflect: true
-      },
-      available: {
-        type: Number,
       },
       fruit: {
         type: String
@@ -87,22 +83,23 @@ export class Card extends LitElement {
     }
   }
 
-
   render() {
     if (this.showClass) {
       return html `
       <div>
-      <div class="unplayed"> 
-      ${this.isPlayed ? html`` : html`<p>❔</p>`}
-    </div>
-      <div id="value" class='${classMap(this.valueClass)}'>
-        ${this.fruit}
-      </div>
+        <div class="unplayed">
+          ${this.isPlayed ? html`` : html`<p>❔</p>`}
+        </div>
+        <div id="value" class='${classMap(this.valueClass)}'>
+          ${this.fruit}
+        </div>
       </div>
     `;
     } else {
       return html `
-      <div>Pair found</div>
+      <div class="card-found">
+        Pair found 
+      </div>
       `
     }
   }

@@ -114,9 +114,9 @@ export class Memory extends LitElement {
     };
     this.playerTurn = true;
     this.isWinner = false;
-    this.message = 'Lets play Memory';
     this.addScore1 = 0;
     this.addScore2 = 0;
+    this.message = 'Lets play memory';
     this.player1Name = 'Oscar';
     this.player2Name = 'Rival';
     this.player1Turn = true;
@@ -213,11 +213,13 @@ export class Memory extends LitElement {
       }
       this.requestUpdate();
       if (this.gameFinish === 5) {
-        if (this.addScore1 > this.addScore2) {
-          this.message = 'Oscar Wins';
-        } else {
-          this.message = 'Rival Wins';
-        }
+        setTimeout(() => {
+          if (this.addScore1 > this.addScore2) {
+            this.message = 'Oscar Wins';
+          } else {
+            this.message = 'Rival Wins';
+          }
+        }, 1000);
       }
     }
   }
@@ -234,20 +236,22 @@ export class Memory extends LitElement {
 
   __changeTurn() {
     if (this.turnCounter === 2) {
-      if (!this.isWinner) {
-        this.player1Turn = !this.player1Turn;
-        this.player2Turn = !this.player2Turn;
-        this.playerTurn = !this.playerTurn;
-      }
+      setTimeout(() => {
+        if (!this.isWinner) {
+          this.playerTurn = !this.playerTurn;
+          this.player1Turn = !this.player1Turn;
+          this.player2Turn = !this.player2Turn;
+        }
+      }, 1000);
       this.turnCounter = 0;
     }
   }
 
   __addToBoard() {
     if (this.playerTurn) {
-      this.addScore2 += 1;
-    } else {
       this.addScore1 += 1;
+    } else {
+      this.addScore2 += 1;
     }
   }
 
@@ -255,26 +259,26 @@ export class Memory extends LitElement {
     if (this.saveFruit.value === card) {
       this.turnCounter = 0;
       this.gameFinish += 1;
-      this.isWinner = true;
-      this.__addToBoard();
       setTimeout(() => {
         this.cardArray[i].show = false;
         this.cardArray[this.saveFruit.id].show = false;
+        this.isWinner = true;
+        this.__addToBoard();
         this.saveFruit = {
           value: '',
           id: '',
         };
-      }, 1000);
+      }, 500);
     } else {
-      this.isWinner = false;
       setTimeout(() => {
         this.cardArray[this.saveFruit.id].isPlayed = false;
         this.cardArray[i].isPlayed = false;
+        this.isWinner = false;
         this.saveFruit = {
           value: '',
           id: '',
         };
-      }, 1000);
+      }, 500);
       this.cardArray[i].isPlayed = true;
       this.cardArray[this.saveFruit.id].isPlayed = true;
     }

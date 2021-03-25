@@ -18,7 +18,6 @@ export class Memory extends LitElement {
         height: auto;
       }
       #board {
-        padding: 40px;
         width: 100%;
         display: flex;
         height: auto;
@@ -101,6 +100,9 @@ export class Memory extends LitElement {
       player2Name: {
         type: String,
       },
+      message: {
+        type: String,
+      },
     };
   }
 
@@ -112,10 +114,11 @@ export class Memory extends LitElement {
     };
     this.playerTurn = true;
     this.isWinner = false;
+    this.message = 'Lets play Memory';
     this.addScore1 = 0;
     this.addScore2 = 0;
     this.player1Name = 'Oscar';
-    this.player2Name = 'Rival;';
+    this.player2Name = 'Rival';
     this.player1Turn = true;
     this.player2Turn = false;
     this.gameFinish = 0;
@@ -195,27 +198,27 @@ export class Memory extends LitElement {
   }
 
   __fruitSelected(card, i) {
-    this.__playerManage();
-    this.turnCounter += 1;
-    this.__changeTurn();
-    this.cardArray[i].isPlayed = true;
-    if (this.saveFruit.value) {
-      this.__compareFruits(card, i);
-    } else {
-      this.saveFruit = {
-        value: card,
-        id: i,
-      };
-    }
-    this.requestUpdate();
-    if (this.gameFinish === 5) {
-      setTimeout(() => {
+    if (this.saveFruit.id !== i) {
+      this.__playerManage();
+      this.turnCounter += 1;
+      this.__changeTurn();
+      this.cardArray[i].isPlayed = true;
+      if (this.saveFruit.value) {
+        this.__compareFruits(card, i);
+      } else {
+        this.saveFruit = {
+          value: card,
+          id: i,
+        };
+      }
+      this.requestUpdate();
+      if (this.gameFinish === 5) {
         if (this.addScore1 > this.addScore2) {
-          alert('!Oscar WINS!');
+          this.message = 'Oscar Wins';
         } else {
-          alert('Rival WINS');
+          this.message = 'Rival Wins';
         }
-      }, 2000);
+      }
     }
   }
 
@@ -231,22 +234,20 @@ export class Memory extends LitElement {
 
   __changeTurn() {
     if (this.turnCounter === 2) {
-      setTimeout(() => {
-        if (!this.isWinner) {
-          this.playerTurn = !this.playerTurn;
-          this.player1Turn = !this.player1Turn;
-          this.player2Turn = !this.player2Turn;
-        }
-      }, 2000);
+      if (!this.isWinner) {
+        this.player1Turn = !this.player1Turn;
+        this.player2Turn = !this.player2Turn;
+        this.playerTurn = !this.playerTurn;
+      }
       this.turnCounter = 0;
     }
   }
 
   __addToBoard() {
     if (this.playerTurn) {
-      this.addScore1 += 1;
-    } else {
       this.addScore2 += 1;
+    } else {
+      this.addScore1 += 1;
     }
   }
 
@@ -254,21 +255,21 @@ export class Memory extends LitElement {
     if (this.saveFruit.value === card) {
       this.turnCounter = 0;
       this.gameFinish += 1;
+      this.isWinner = true;
+      this.__addToBoard();
       setTimeout(() => {
         this.cardArray[i].show = false;
         this.cardArray[this.saveFruit.id].show = false;
-        this.isWinner = true;
-        this.__addToBoard();
         this.saveFruit = {
           value: '',
           id: '',
         };
       }, 1000);
     } else {
+      this.isWinner = false;
       setTimeout(() => {
         this.cardArray[this.saveFruit.id].isPlayed = false;
         this.cardArray[i].isPlayed = false;
-        this.isWinner = false;
         this.saveFruit = {
           value: '',
           id: '',
@@ -288,7 +289,7 @@ export class Memory extends LitElement {
           .player="${this.player1Name}"
           class="player1"
         ></score-board>
-        <div id="welcome-message">Let's play Memory</div>
+        <div id="welcome-message">${this.message}</div>
         <score-board
           .score="${this.addScore2}"
           .isTurn="${this.player2Turn}"

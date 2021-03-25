@@ -1,15 +1,9 @@
-import {
-  css,
-  html,
-  LitElement
-} from 'lit-element';
-import {
-  classMap
-} from 'lit-html/directives/class-map';
+import { css, html, LitElement } from 'lit-element';
+import { classMap } from 'lit-html/directives/class-map';
 
 export class Card extends LitElement {
   static get styles() {
-    return css `
+    return css`
       :host {
         width: 80px;
         height: 70px;
@@ -50,22 +44,22 @@ export class Card extends LitElement {
       },
       winner: {
         type: String,
-        reflect: true
+        reflect: true,
       },
       fruit: {
-        type: String
+        type: String,
       },
       showClass: {
-        type: Boolean
-      }
-    }
+        type: Boolean,
+      },
+    };
   }
 
   constructor() {
     super();
     this.isPlayed = false;
     this.valueClass = {
-      hide: !this.isPlayed
+      hide: !this.isPlayed,
     };
     this.showClass = true;
   }
@@ -74,33 +68,27 @@ export class Card extends LitElement {
     super.connectedCallback();
   }
 
-
   updated(changedProperties) {
     if (changedProperties.has('isPlayed')) {
       this.valueClass = {
-        hide: this.isPlayed
+        hide: this.isPlayed,
       };
     }
   }
 
   render() {
     if (this.showClass) {
-      return html `
-      <div>
-        <div class="unplayed">
-          ${this.isPlayed ? html`` : html`<p>❔</p>`}
+      return html`
+        <div>
+          <div class="unplayed">
+            ${this.isPlayed ? html`` : html`<p>❔</p>`}
+          </div>
+          <div id="value" class="${classMap(this.valueClass)}">
+            ${this.fruit}
+          </div>
         </div>
-        <div id="value" class='${classMap(this.valueClass)}'>
-          ${this.fruit}
-        </div>
-      </div>
-    `;
-    } else {
-      return html `
-      <div class="card-found">
-        Pair found 
-      </div>
-      `
+      `;
     }
+    return html` <div class="card-found">Pair found</div> `;
   }
 }

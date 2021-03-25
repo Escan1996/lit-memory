@@ -1,15 +1,10 @@
-import {
-  css,
-  html,
-  LitElement
-} from 'lit-element';
-import './Card.js'
+import { css, html, LitElement } from 'lit-element';
+import './Card.js';
 import './score-board.js';
 
 export class Memory extends LitElement {
-
   static get styles() {
-    return css `
+    return css`
       :host {
         background-image: url('https://i.pinimg.com/originals/79/52/6c/79526c076a08e525becfd4215e1c6c16.jpg');
         display: flex;
@@ -42,7 +37,7 @@ export class Memory extends LitElement {
         margin-right: 100px;
         margin-left: 50px;
       }
-      
+
       .player2 {
         margin-left: 100px;
         margin-right: 50px;
@@ -59,7 +54,7 @@ export class Memory extends LitElement {
         z-index: 1;
         background-image: url('https://image.winudf.com/v2/image/Y29tLmJsYWNrYmFja2dyb3VuZHdhbGxwYXBlcnNpbWFnZXNfc2NyZWVuXzJfMTUwOTI1MjEyOV8wOTU/screen-2.jpg?h=355&fakeurl=1&type=.jpg');
       }
-      
+
       .play-image {
         border-radius: 2rem;
         max-width: 200px;
@@ -74,32 +69,38 @@ export class Memory extends LitElement {
         type: Array,
       },
       saveFruit: {
-        type: Object
+        type: Object,
       },
       turnCounter: {
-        type: Number
+        type: Number,
       },
       playerTurn: {
-        type: Boolean
+        type: Boolean,
       },
       addScore1: {
-        type: Number
+        type: Number,
       },
       addScore2: {
-        type: Number
+        type: Number,
       },
       player1Turn: {
-        type: Boolean
+        type: Boolean,
       },
       player2Turn: {
-        type: Boolean
+        type: Boolean,
       },
       isWinner: {
-        type: Boolean
+        type: Boolean,
       },
       gameFinish: {
-        type: Number
-      }
+        type: Number,
+      },
+      player1Name: {
+        type: String,
+      },
+      player2Name: {
+        type: String,
+      },
     };
   }
 
@@ -107,63 +108,77 @@ export class Memory extends LitElement {
     super();
     this.saveFruit = {
       value: '',
-      id: ''
+      id: '',
     };
     this.playerTurn = true;
     this.isWinner = false;
     this.addScore1 = 0;
     this.addScore2 = 0;
+    this.player1Name = 'Oscar';
+    this.player2Name = 'Rival;';
     this.player1Turn = true;
     this.player2Turn = false;
     this.gameFinish = 0;
     this.turnCounter = 0;
-    this.cardArray = [{
-      value: '🍕',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍍',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍉',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🥕',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍤',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍕',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍍',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍉',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🥕',
-      show: true,
-      isPlayed: false
-    }, {
-      value: '🍤',
-      show: true,
-      isPlayed: false
-    }];
+    this.cardArray = [
+      {
+        value: '🍕',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍍',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍉',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🥕',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍤',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍕',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍍',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍉',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🥕',
+        show: true,
+        isPlayed: false,
+      },
+      {
+        value: '🍤',
+        show: true,
+        isPlayed: false,
+      },
+    ];
   }
 
   __sortCards() {
-    var currentIndex = this.cardArray.length,
-      temporaryValue, randomIndex;
-    while (0 !== currentIndex) {
+    let currentIndex = this.cardArray.length;
+    let temporaryValue;
+    let randomIndex;
+    while (currentIndex !== 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
       temporaryValue = this.cardArray[currentIndex];
@@ -181,7 +196,7 @@ export class Memory extends LitElement {
 
   __fruitSelected(card, i) {
     this.__playerManage();
-    this.turnCounter++;
+    this.turnCounter += 1;
     this.__changeTurn();
     this.cardArray[i].isPlayed = true;
     if (this.saveFruit.value) {
@@ -189,7 +204,7 @@ export class Memory extends LitElement {
     } else {
       this.saveFruit = {
         value: card,
-        id: i
+        id: i,
       };
     }
     this.requestUpdate();
@@ -198,7 +213,7 @@ export class Memory extends LitElement {
         if (this.addScore1 > this.addScore2) {
           alert('!Oscar WINS!');
         } else {
-          alert('Rival WINS')
+          alert('Rival WINS');
         }
       }, 2000);
     }
@@ -229,16 +244,16 @@ export class Memory extends LitElement {
 
   __addToBoard() {
     if (this.playerTurn) {
-      this.addScore1++;
+      this.addScore1 += 1;
     } else {
-      this.addScore2++;
+      this.addScore2 += 1;
     }
   }
 
   __compareFruits(card, i) {
     if (this.saveFruit.value === card) {
       this.turnCounter = 0;
-      this.gameFinish++;
+      this.gameFinish += 1;
       setTimeout(() => {
         this.cardArray[i].show = false;
         this.cardArray[this.saveFruit.id].show = false;
@@ -246,7 +261,7 @@ export class Memory extends LitElement {
         this.__addToBoard();
         this.saveFruit = {
           value: '',
-          id: ''
+          id: '',
         };
       }, 1000);
     } else {
@@ -256,7 +271,7 @@ export class Memory extends LitElement {
         this.isWinner = false;
         this.saveFruit = {
           value: '',
-          id: ''
+          id: '',
         };
       }, 1000);
       this.cardArray[i].isPlayed = true;
@@ -265,19 +280,34 @@ export class Memory extends LitElement {
   }
 
   render() {
-    return html `
+    return html`
       <div class="score-board">
-        <score-board .score="${this.addScore1}" .isTurn="${this.player1Turn}" .player="${'Oscar'}" class="player1"></score-board>
-        <div id='welcome-message'>
-        Let's play Memory
+        <score-board
+          .score="${this.addScore1}"
+          .isTurn="${this.player1Turn}"
+          .player="${this.player1Name}"
+          class="player1"
+        ></score-board>
+        <div id="welcome-message">Let's play Memory</div>
+        <score-board
+          .score="${this.addScore2}"
+          .isTurn="${this.player2Turn}"
+          .player="${this.player2Name}"
+          class="player2"
+        ></score-board>
       </div>
-        <score-board .score="${this.addScore2}" .isTurn="${this.player2Turn}" .player="${'Rival'}" class="player2"></score-board>
-      </div>
-      <div id='board'> 
-        ${this.cardArray.map((card, i) => html`
-        <card-memory @click="${e => this.__fruitSelected(card.value, i)}" .fruit="${card.value}" .showClass="${card.show}" .isPlayed="${card.isPlayed}">
-        </card-memory>
-        `)}
+      <div id="board">
+        ${this.cardArray.map(
+          (card, i) => html`
+            <card-memory
+              @click="${e => this.__fruitSelected(card.value, i, e)}"
+              .fruit="${card.value}"
+              .showClass="${card.show}"
+              .isPlayed="${card.isPlayed}"
+            >
+            </card-memory>
+          `
+        )}
       </div>
     `;
   }
